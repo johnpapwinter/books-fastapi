@@ -1,2 +1,2 @@
-from models.models import BookRequest, SearchRequest
-from models.entities import Book
+from models.models import BookRequest, SearchRequest, UserRequest, LoginRequest
+from models.entities import Book, User

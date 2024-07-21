@@ -17,3 +17,16 @@ class SearchRequest(BaseModel):
     author: str = Field(min_length=3)
 
 
+class UserRequest(BaseModel):
+    id: Optional[int] = Field(default=None)
+    username: str = Field(min_length=3)
+    email: str = Field(min_length=3)
+    password: str = Field(min_length=3)
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class LoginRequest(BaseModel):
+    username: str = Field(min_length=3)
+    password: str = Field(min_length=3)
+

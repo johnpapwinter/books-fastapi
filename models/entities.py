@@ -13,3 +13,10 @@ class Book(Base):
     pages = Column(Integer)
 
 
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String)
+    email = Column(String)
+    password = Column(String)
