@@ -30,3 +30,9 @@ class LoginRequest(BaseModel):
     username: str = Field(min_length=3)
     password: str = Field(min_length=3)
 
+
+class LoginResponse(BaseModel):
+    access_token: str = Field(min_length=3)
+    token_type: str = Field(min_length=3)
+    username: str = Field(min_length=3)
+

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from starlette import status
 
 from models import LoginRequest, UserRequest
@@ -23,3 +24,11 @@ async def register(user_request: UserRequest, service: UserService = Depends(get
 async def get_all_users(service: UserService = Depends(get_user_service)):
     return service.get_all_users()
 
+
+@user_router.get("/whoami", status_code=status.HTTP_200_OK, response_model=UserRequest)
+async def get_who_am_i(
+        credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer()),
+        service: UserService = Depends(get_user_service)
+):
+    return service.verify_token(credentials)
+k
