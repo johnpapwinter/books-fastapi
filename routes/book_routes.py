@@ -1,16 +1,20 @@
-from fastapi import APIRouter, Path, HTTPException, Depends
+from fastapi import APIRouter, Path, HTTPException, Depends, Query
 from starlette import status
 
-from models import BookRequest, SearchRequest
+from models import BookRequest, SearchRequest, PaginatedResponse
 from service import BookService, get_book_service
 
 router = APIRouter(prefix="/book")
 
 
-@router.get("/get-all", status_code=status.HTTP_200_OK, response_model=list[BookRequest])
-async def get_all(service: BookService = Depends(get_book_service)):
+@router.get("/get-all", status_code=status.HTTP_200_OK, response_model=PaginatedResponse[BookRequest])
+async def get_all(
+        page: int = Query(1, ge=1),
+        page_size: int = Query(10, ge=1),
+        service: BookService = Depends(get_book_service)
+):
 
-    return service.get_all_books()
+    return service.get_all_books(page, page_size)
 
 
 @router.get("/get/{book_id}", status_code=status.HTTP_200_OK, response_model=BookRequest)
@@ -39,7 +43,12 @@ async def delete_book(book_id: int = Path(gt=0)):
     return {"message": f"I deleted book with id {book_id}"}
 
 
-@router.post("/search", status_code=status.HTTP_200_OK)
-async def search_book(search_filters: SearchRequest):
+@router.post("/search", status_code=status.HTTP_200_OK, response_model=PaginatedResponse[BookRequest])
+async def search_book(
+        search_filters: SearchRequest,
+        page: int = Query(1, ge=1),
+        page_size: int = Query(10, ge=1),
+        service: BookService = Depends(get_book_service)
+):
 
-    return {"message": f"I search book with title {search_filters.title} and author {search_filters.author}"}
+    return service.search_books(search_filters, page, page_size)

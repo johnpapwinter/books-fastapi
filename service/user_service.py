@@ -19,8 +19,8 @@ class UserService:
         self.default_expiration_hours = 8
 
     def get_all_users(self) -> list[UserRequest]:
-        result = self.db.query(User).all()
-        return [UserRequest.model_validate(user) for user in result]
+        user = self.db.query(User).all()
+        return [UserRequest.model_validate(user) for user in user]
 
     def sign_up(self, user: UserRequest) -> UserRequest:
         new_user = User(

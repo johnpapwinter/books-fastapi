@@ -1,6 +1,7 @@
-from typing import Optional
+from typing import Optional, Generic, TypeVar, List
 from pydantic import BaseModel, Field, ConfigDict
 
+T = TypeVar('T')
 
 class BookRequest(BaseModel):
     id: Optional[int] = Field(default=None)
@@ -13,8 +14,15 @@ class BookRequest(BaseModel):
 
 
 class SearchRequest(BaseModel):
-    title: str = Field(min_length=3)
-    author: str = Field(min_length=3)
+    title: Optional[str] = Field(default=None)
+    author: Optional[str] = Field(default=None)
+
+
+class PaginatedResponse(BaseModel, Generic[T]):
+    items: List[T]
+    current_page: int
+    total_pages: int
+    total_items: int
 
 
 class UserRequest(BaseModel):

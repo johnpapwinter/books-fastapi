@@ -31,4 +31,3 @@ async def get_who_am_i(
         service: UserService = Depends(get_user_service)
 ):
     return service.verify_token(credentials)
-k
