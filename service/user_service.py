@@ -9,11 +9,12 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models import UserRequest, LoginRequest, LoginResponse
 from models.entities import User
+from service.generic_service import GenericService
 
 
-class UserService:
+class UserService(GenericService[User, UserRequest]):
     def __init__(self, db: Session):
-        self.db = db
+        super().__init__(db, User, UserRequest)
         self.pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
         self.secret_key = "my_secret"
         self.default_expiration_hours = 8
@@ -23,20 +24,13 @@ class UserService:
         return [UserRequest.model_validate(user) for user in user]
 
     def sign_up(self, user: UserRequest) -> UserRequest:
-        new_user = User(
+        new_user = UserRequest(
             username=user.username,
             email=user.email,
             password=self._get_password_hash(user.password)
         )
-        try:
-            self.db.add(new_user)
-            self.db.commit()
-            self.db.refresh(new_user)
-        except Exception as e:
-            print(e)
-            self.db.rollback()
 
-        return UserRequest.model_validate(new_user)
+        return self.create(new_user)
 
     def login(self, login_request: LoginRequest) -> LoginResponse:
         user = self.db.query(User).filter(User.username == login_request.username).first()
