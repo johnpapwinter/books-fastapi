@@ -27,7 +27,8 @@ class UserService(GenericService[User, UserRequest]):
         new_user = UserRequest(
             username=user.username,
             email=user.email,
-            password=self._get_password_hash(user.password)
+            password=self._get_password_hash(user.password),
+            role="USER"
         )
 
         return self.create(new_user)
