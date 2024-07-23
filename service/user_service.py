@@ -75,6 +75,13 @@ class UserService(GenericService[User, UserRequest]):
         encoded_jwt = jwt.encode(to_encode, self.secret_key, algorithm='HS256')
         return encoded_jwt
 
+    def _get_user_roles(self, username: str) -> list[str]:
+        user = self.db.query(User).filter(User.username == username).first()
+        if not user:
+            return []
+
+        return user.roles if hasattr(user, 'roles') else []
+
 
 def get_user_service(db: Session = Depends(get_db)):
     return UserService(db)
