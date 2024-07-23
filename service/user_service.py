@@ -37,7 +37,7 @@ class UserService(GenericService[User, UserRequest]):
         if not user:
             raise HTTPException(status_code=401, detail='Incorrect username or password')
         if self._verify_password(login_request.password, user.password):
-            token = self._generate_jwt(data={"sub": user.username, "roles": ["ADMIN"]})
+            token = self._generate_jwt(data={"sub": user.username, "role": user.role})
             return LoginResponse(access_token=token, token_type="Bearer", username=user.username)
         else:
             raise HTTPException(status_code=401, detail='Incorrect username or password')
