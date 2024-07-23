@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field, ConfigDict
 
 T = TypeVar('T')
 
+
 class BookRequest(BaseModel):
     id: Optional[int] = Field(default=None)
     title: str = Field(min_length=3)
@@ -30,6 +31,7 @@ class UserRequest(BaseModel):
     username: str = Field(min_length=3)
     email: str = Field(min_length=3)
     password: str = Field(min_length=3)
+    role: str = Field(min_length=3)
 
     model_config = ConfigDict(from_attributes=True)
 
