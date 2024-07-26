@@ -37,6 +37,7 @@ async def create_book(book_request: BookRequest,
                       user_service: UserService = Depends(get_user_service),
                       credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer()),
                       ):
+    user_service.verify_token(credentials=credentials)
 
     return service.create_new_book(book_request)
 

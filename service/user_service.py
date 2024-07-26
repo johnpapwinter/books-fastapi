@@ -7,7 +7,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import UserRequest, LoginRequest, LoginResponse
+from models import UserRequest, LoginRequest, LoginResponse, ChangePasswordRequest
 from models.entities import User
 from service.generic_service import GenericService
 
@@ -40,6 +40,22 @@ class UserService(GenericService[User, UserRequest]):
         if self._verify_password(login_request.password, user.password):
             token = self._generate_jwt(data={"sub": user.username, "role": user.role})
             return LoginResponse(access_token=token, token_type="Bearer", username=user.username)
+        else:
+            raise HTTPException(status_code=401, detail='Incorrect username or password')
+
+    def change_password(self, change_password_request: ChangePasswordRequest) -> UserRequest:
+        user = self.db.query(User).filter(User.id == change_password_request.id).first()
+        if not user:
+            raise HTTPException(status_code=401, detail='Incorrect username or password')
+        if self._verify_password(change_password_request.old_password, user.password):
+            update_user = UserRequest(
+                id=user.id,
+                username=user.username,
+                email=user.email,
+                password=self._get_password_hash(change_password_request.new_password),
+                role="USER"
+            )
+            return self.update(user, update_user.model_dump(exclude_unset=True))
         else:
             raise HTTPException(status_code=401, detail='Incorrect username or password')
 

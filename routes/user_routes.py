@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from starlette import status
 
-from models import LoginRequest, UserRequest
+from models import LoginRequest, UserRequest, ChangePasswordRequest
 from service.user_service import UserService, get_user_service
 
 user_router = APIRouter(prefix="/auth")
@@ -23,6 +23,15 @@ async def register(user_request: UserRequest, service: UserService = Depends(get
 @user_router.get("/get-all", status_code=status.HTTP_200_OK, response_model=list[UserRequest])
 async def get_all_users(service: UserService = Depends(get_user_service)):
     return service.get_all_users()
+
+
+@user_router.patch("/change-password", status_code=status.HTTP_200_OK, response_model=UserRequest)
+async def change_password(change_password_request: ChangePasswordRequest,
+                          service: UserService = Depends(get_user_service),
+                          credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer()),):
+    service.verify_token(credentials=credentials)
+
+    return service.change_password(change_password_request)
 
 
 @user_router.get("/whoami", status_code=status.HTTP_200_OK, response_model=UserRequest)

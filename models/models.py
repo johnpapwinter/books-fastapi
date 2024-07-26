@@ -46,3 +46,9 @@ class LoginResponse(BaseModel):
     token_type: str = Field(min_length=3)
     username: str = Field(min_length=3)
 
+
+class ChangePasswordRequest(BaseModel):
+    id: int
+    username: str = Field(min_length=3)
+    old_password: str = Field(min_length=3)
+    new_password: str = Field(min_length=3)
