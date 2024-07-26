@@ -3,7 +3,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session, joinedload
 
 from database import get_db
-from models import Book, BookRequest, SearchRequest, PaginatedResponse, BookResponse
+from models import Book, BookRequest, SearchRequest, PaginatedResponse, BookResponse, Genre
 from service.generic_service import GenericService
 
 
@@ -44,6 +44,17 @@ class BookService(GenericService[Book, BookRequest]):
             query = query.filter(or_(*filters))
 
         return self._paginate(query, page, page_size)
+
+    def add_book_to_genre(self, book_id: int, genre_id: int) -> BookResponse:
+        book = self.db.query(Book).filter(Book.id == book_id).first()
+        genre = self.db.query(Genre).filter(Genre.id == genre_id).first()
+        if genre is None or book is None:
+            raise HTTPException(status_code=404, detail="Entity not found")
+
+        book.genre_id = genre_id
+        book.genre = genre
+
+        return self._db_operation(lambda: self._refresh(book))
 
 
 def get_book_service(db: Session = Depends(get_db)):

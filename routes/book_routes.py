@@ -48,6 +48,15 @@ async def update_book(book_request: BookRequest,
     return service.update_book(book_request.id, book_request)
 
 
+@router.get("/add-genre/{book_id}/{genre_id}", status_code=status.HTTP_200_OK, response_model=BookResponse)
+async def add_book_to_genre(book_id: int = Path(gt=0),
+                            genre_id: int = Path(gt=0),
+                            service: BookService = Depends(get_book_service),
+                            payload: Any = Depends(filter_for_role(UserRole.ANY))):
+
+    return service.add_book_to_genre(book_id, genre_id)
+
+
 @router.delete("/delete/{book_id}", status_code=status.HTTP_200_OK)
 async def delete_book(book_id: int = Path(gt=0),
                       payload: Any = Depends(filter_for_role(UserRole.ADMIN))):
