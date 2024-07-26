@@ -5,13 +5,13 @@ from starlette import status
 
 from auth import filter_for_role
 from enums import UserRole
-from models import BookRequest, SearchRequest, PaginatedResponse
+from models import BookRequest, SearchRequest, PaginatedResponse, BookResponse
 from service import BookService, get_book_service
 
 router = APIRouter(prefix="/book")
 
 
-@router.get("/get-all", status_code=status.HTTP_200_OK, response_model=PaginatedResponse[BookRequest])
+@router.get("/get-all", status_code=status.HTTP_200_OK, response_model=PaginatedResponse[BookResponse])
 async def get_all(
         page: int = Query(1, ge=1),
         page_size: int = Query(10, ge=1),
@@ -21,7 +21,7 @@ async def get_all(
     return service.get_all_books(page, page_size)
 
 
-@router.get("/get/{book_id}", status_code=status.HTTP_200_OK, response_model=BookRequest)
+@router.get("/get/{book_id}", status_code=status.HTTP_200_OK, response_model=BookResponse)
 async def get_one(service: BookService = Depends(get_book_service),
                   payload: Any = Depends(filter_for_role(UserRole.ANY)),
                   book_id: int = Path(gt=0)):

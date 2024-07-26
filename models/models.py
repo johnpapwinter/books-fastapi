@@ -14,6 +14,13 @@ class BookRequest(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class GenreRequest(BaseModel):
+    id: Optional[int] = Field(default=None)
+    name: str = Field(min_length=3)
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class SearchRequest(BaseModel):
     title: Optional[str] = Field(default=None)
     author: Optional[str] = Field(default=None)
@@ -52,3 +59,7 @@ class ChangePasswordRequest(BaseModel):
     username: str = Field(min_length=3)
     old_password: str = Field(min_length=3)
     new_password: str = Field(min_length=3)
+
+
+class BookResponse(BookRequest):
+    genre: Optional[GenreRequest] = None

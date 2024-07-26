@@ -1,9 +1,9 @@
 from fastapi import Depends, HTTPException
 from sqlalchemy import or_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from database import get_db
-from models import Book, BookRequest, SearchRequest, PaginatedResponse
+from models import Book, BookRequest, SearchRequest, PaginatedResponse, BookResponse
 from service.generic_service import GenericService
 
 
@@ -11,12 +11,12 @@ class BookService(GenericService[Book, BookRequest]):
     def __init__(self, db: Session):
         super().__init__(db, Book, BookRequest)
 
-    def get_book(self, book_id: int) -> BookRequest | None:
-        book = self.db.query(Book).filter(Book.id == book_id).first()
-        return BookRequest.model_validate(book) if book else None
+    def get_book(self, book_id: int) -> BookResponse | None:
+        book = self.db.query(Book).options(joinedload(self.model.genre)).filter(Book.id == book_id).first()
+        return BookResponse.model_validate(book) if book else None
 
-    def get_all_books(self, page: int = 1, page_size: int = 10) -> PaginatedResponse[BookRequest]:
-        query = self.db.query(Book)
+    def get_all_books(self, page: int = 1, page_size: int = 10) -> PaginatedResponse[BookResponse]:
+        query = self.db.query(Book).options(joinedload(self.model.genre))
         return self._paginate(query, page, page_size)
 
     def create_new_book(self, book: BookRequest) -> BookRequest:

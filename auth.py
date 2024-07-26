@@ -28,7 +28,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(HTTPBea
 
 def filter_for_role(required_role: UserRole):
     def role_checker(current_user: User = Depends(get_current_user)):
-        if required_role.name == UserRole.ANY:
+        if required_role.value == "ANY":
             return current_user
         if current_user.role != required_role.name:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Insufficient rights")
