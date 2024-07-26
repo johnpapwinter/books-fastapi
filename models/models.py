@@ -63,3 +63,7 @@ class ChangePasswordRequest(BaseModel):
 
 class BookResponse(BookRequest):
     genre: Optional[GenreRequest] = None
+
+
+class GenreResponse(GenreRequest):
+    books: Optional[List[BookRequest]] = None
