@@ -8,7 +8,7 @@ class Book(Base):
     __tablename__ = 'books'
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
+    title = Column(String, unique=True)
     author = Column(String)
     year = Column(Integer)
     pages = Column(Integer)
@@ -20,7 +20,7 @@ class Genre(Base):
     __tablename__ = 'genres'
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
+    name = Column(String, unique=True)
     books = relationship('Book', back_populates='genre')
 
 
@@ -29,6 +29,6 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String)
-    email = Column(String)
+    email = Column(String, unique=True)
     password = Column(String)
     role = Column(String)
