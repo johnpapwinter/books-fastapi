@@ -5,6 +5,7 @@ from starlette import status
 
 from auth import filter_for_role
 from enums import UserRole
+from error_messages import ErrorMessages
 from models import BookRequest, SearchRequest, PaginatedResponse, BookResponse
 from service import BookService, get_book_service
 
@@ -43,7 +44,7 @@ async def update_book(book_request: BookRequest,
                       payload: Any = Depends(filter_for_role(UserRole.ANY))):
 
     if book_request.id is None:
-        raise HTTPException(status_code=400, detail="Id should not be null")
+        raise HTTPException(status_code=400, detail=ErrorMessages.ID_SHOULD_NOT_BE_NULL.value)
 
     return service.update_book(book_request.id, book_request)
 

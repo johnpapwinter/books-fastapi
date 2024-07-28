@@ -3,6 +3,7 @@ from sqlalchemy import or_
 from sqlalchemy.orm import Session, joinedload
 
 from database import get_db
+from error_messages import ErrorMessages
 from models import Book, BookRequest, SearchRequest, PaginatedResponse, BookResponse, Genre
 from service.generic_service import GenericService
 
@@ -25,7 +26,7 @@ class BookService(GenericService[Book, BookRequest]):
     def update_book(self, book_id: int, updated_book: BookRequest) -> BookRequest:
         book = self.db.query(Book).filter(Book.id == book_id).first()
         if book is None:
-            raise HTTPException(status_code=404, detail="Book not found")
+            raise HTTPException(status_code=404, detail=ErrorMessages.BOOK_NOT_FOUND.value)
 
         update_data = updated_book.model_dump(exclude_unset=True)
         return self.update(book, update_data)
@@ -49,7 +50,7 @@ class BookService(GenericService[Book, BookRequest]):
         book = self.db.query(Book).filter(Book.id == book_id).first()
         genre = self.db.query(Genre).filter(Genre.id == genre_id).first()
         if genre is None or book is None:
-            raise HTTPException(status_code=404, detail="Entity not found")
+            raise HTTPException(status_code=404, detail=ErrorMessages.ENTITY_NOT_FOUND.value)
 
         book.genre_id = genre_id
         book.genre = genre

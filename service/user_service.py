@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session
 
 from auth import generate_jwt
 from database import get_db
+from enums import UserRole
+from error_messages import ErrorMessages
 from models import UserRequest, LoginRequest, LoginResponse, ChangePasswordRequest
 from models.entities import User
 from service.generic_service import GenericService
@@ -23,7 +25,7 @@ class UserService(GenericService[User, UserRequest]):
             username=user.username,
             email=user.email,
             password=self._get_password_hash(user.password),
-            role="USER"
+            role=UserRole.USER.value
         )
 
         return self.create(new_user)
@@ -31,17 +33,17 @@ class UserService(GenericService[User, UserRequest]):
     def login(self, login_request: LoginRequest) -> LoginResponse:
         user = self.db.query(User).filter(User.username == login_request.username).first()
         if not user:
-            raise HTTPException(status_code=401, detail='Incorrect username or password')
+            raise HTTPException(status_code=401, detail=ErrorMessages.INCORRECT_CREDENTIALS.value)
         if self._verify_password(login_request.password, user.password):
             token = generate_jwt(data={"sub": user.username, "role": user.role})
             return LoginResponse(access_token=token, token_type="Bearer", username=user.username)
         else:
-            raise HTTPException(status_code=401, detail='Incorrect username or password')
+            raise HTTPException(status_code=401, detail=ErrorMessages.INCORRECT_CREDENTIALS.value)
 
     def change_password(self, change_password_request: ChangePasswordRequest) -> UserRequest:
         user = self.db.query(User).filter(User.id == change_password_request.id).first()
         if not user:
-            raise HTTPException(status_code=401, detail='Incorrect username or password')
+            raise HTTPException(status_code=401, detail=ErrorMessages.INCORRECT_CREDENTIALS.value)
         if self._verify_password(change_password_request.old_password, user.password):
             update_user = UserRequest(
                 id=user.id,
@@ -52,7 +54,7 @@ class UserService(GenericService[User, UserRequest]):
             )
             return self.update(user, update_user.model_dump(exclude_unset=True))
         else:
-            raise HTTPException(status_code=401, detail='Incorrect username or password')
+            raise HTTPException(status_code=401, detail=ErrorMessages.INCORRECT_CREDENTIALS.value)
 
     def _get_password_hash(self, password: str) -> str:
         return self.pwd_context.hash(password)

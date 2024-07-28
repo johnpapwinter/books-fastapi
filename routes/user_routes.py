@@ -32,13 +32,3 @@ async def change_password(change_password_request: ChangePasswordRequest,
                           payload: Any = Depends(filter_for_role(UserRole.ANY))):
 
     return service.change_password(change_password_request)
-
-
-@user_router.get("/admin")
-async def get_admin(payload: Any = Depends(filter_for_role(UserRole.ADMIN))):
-    return {"message": f"You are an admin"}
-
-
-@user_router.get("/user")
-async def get_user(payload: Any = Depends(filter_for_role(UserRole.USER))):
-    return {"message": f"You are an user"}

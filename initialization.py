@@ -21,7 +21,7 @@ def create_admin_user(db: Session):
         return
 
     admin_user = User(
-        username=os.getenv("ADMIN_USER"),
+        username=os.getenv("ADMIN_USERNAME"),
         email=os.getenv("ADMIN_EMAIL"),
         password=password_context.hash(os.getenv("ADMIN_PASSWORD")),
         role=UserRole.ADMIN.value,
