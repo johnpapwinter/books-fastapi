@@ -1,6 +1,8 @@
+import os
 from datetime import datetime, timedelta
 
 import jwt
+from dotenv import load_dotenv
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
@@ -10,8 +12,10 @@ from database import get_db
 from enums import UserRole
 from models import User
 
-JWT_SECRET = "my_secret"
-JWT_ALGORITHM = "HS256"
+load_dotenv()
+
+JWT_SECRET = os.getenv("JWT_SECRET")
+JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
 JWT_DEFAULT_EXPIRATION_HOURS = 8
 
 
