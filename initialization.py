@@ -43,7 +43,3 @@ def initialize_db():
     db = next(get_db())
     create_admin_user(db)
     db.close()
-
-
-def startup_event():
-    initialize_db()
