@@ -6,7 +6,6 @@ from config import get_settings
 
 settings = get_settings()
 
-# SQLALCHEMY_DATABASE_URI = 'sqlite:///books.db'
 SQLALCHEMY_DATABASE_URI = settings.DATABASE_URL
 
 engine = create_engine(SQLALCHEMY_DATABASE_URI, connect_args={'check_same_thread': False})

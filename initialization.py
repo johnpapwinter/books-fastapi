@@ -1,6 +1,3 @@
-import os
-
-from dotenv import load_dotenv
 from passlib.context import CryptContext
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -11,7 +8,6 @@ from models import User, entities
 
 from config import get_settings
 
-# load_dotenv()
 settings = get_settings()
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -27,9 +23,6 @@ def create_admin_user(db: Session):
         username=settings.ADMIN_USERNAME,
         email=settings.ADMIN_EMAIL,
         password=password_context.hash(settings.ADMIN_PASSWORD),
-        # username=os.getenv("ADMIN_USERNAME"),
-        # email=os.getenv("ADMIN_EMAIL"),
-        # password=password_context.hash(os.getenv("ADMIN_PASSWORD")),
         role=UserRole.ADMIN.value,
     )
 

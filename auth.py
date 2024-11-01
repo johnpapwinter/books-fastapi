@@ -1,8 +1,6 @@
-import os
 from datetime import datetime, timedelta
 
 import jwt
-from dotenv import load_dotenv
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
@@ -21,9 +19,6 @@ settings = get_settings()
 JWT_SECRET = settings.JWT_SECRET
 JWT_ALGORITHM = settings.JWT_ALGORITHM
 JWT_DEFAULT_EXPIRATION_HOURS = settings.JWT_DEFAULT_EXPIRATION_HOURS
-# JWT_SECRET = os.getenv("JWT_SECRET")
-# JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
-# JWT_DEFAULT_EXPIRATION_HOURS = 8
 
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer()),
