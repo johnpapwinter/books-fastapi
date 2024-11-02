@@ -13,17 +13,45 @@ class BookService(GenericService[Book, BookRequest]):
         super().__init__(db, Book, BookRequest)
 
     def get_book(self, book_id: int) -> BookResponse | None:
+        """
+        Retrieve a book by its ID.
+        Args: book_id (int): The ID of the book to retrieve.
+        Returns: BookResponse | None: The book response if found, otherwise None.
+        """
         book = self.db.query(Book).options(joinedload(self.model.genre)).filter(Book.id == book_id).first()
         return BookResponse.model_validate(book) if book else None
 
     def get_all_books(self, page: int = 1, page_size: int = 10) -> PaginatedResponse[BookResponse]:
+        """
+        Retrieve all books with pagination.
+        Args:
+            page (int): The page number to retrieve. Defaults to 1.
+            page_size (int): The number of books per page. Defaults to 10.
+        Returns:
+            PaginatedResponse[BookResponse]: A paginated response of books.
+        """
         query = self.db.query(Book).options(joinedload(self.model.genre))
         return self._paginate(query, page, page_size)
 
     def create_new_book(self, book: BookRequest) -> BookRequest:
+        """
+        Create a new book.
+        Args: book (BookRequest): The book request containing the book details.
+        Returns: BookRequest: The created book request.
+        """
         return self.create(book)
 
     def update_book(self, book_id: int, updated_book: BookRequest) -> BookRequest:
+        """
+        Update an existing book.
+        Args:
+            book_id (int): The ID of the book to update.
+            updated_book (BookRequest): The book request containing the updated book details.
+        Returns:
+            BookRequest: The updated book request.
+        Raises:
+            HTTPException: If the book is not found.
+        """
         book = self.db.query(Book).filter(Book.id == book_id).first()
         if book is None:
             raise HTTPException(status_code=404, detail=ErrorMessages.BOOK_NOT_FOUND.value)
@@ -34,6 +62,15 @@ class BookService(GenericService[Book, BookRequest]):
     def search_books(self, search_filters: SearchRequest,
                      page: int = 1,
                      page_size: int = 10) -> PaginatedResponse[BookRequest]:
+        """
+        Search for books based on the provided search filters.
+        Args:
+            search_filters (SearchRequest): The search filters containing the search criteria.
+            page (int): The page number to retrieve. Defaults to 1.
+            page_size (int): The number of books per page. Defaults to 10.
+        Returns:
+            PaginatedResponse[BookRequest]: A paginated response of books matching the search criteria.
+        """
         query = self.db.query(Book)
 
         if search_filters.title or search_filters.author:
@@ -47,6 +84,16 @@ class BookService(GenericService[Book, BookRequest]):
         return self._paginate(query, page, page_size)
 
     def add_book_to_genre(self, book_id: int, genre_id: int) -> BookResponse:
+        """
+        Add a book to a genre.
+        Args:
+            book_id (int): The ID of the book to add to the genre.
+            genre_id (int): The ID of the genre to add the book to.
+        Returns:
+            BookResponse: The updated book response.
+        Raises:
+            HTTPException: If the book or genre is not found.
+        """
         book = self.db.query(Book).filter(Book.id == book_id).first()
         genre = self.db.query(Genre).filter(Genre.id == genre_id).first()
         if genre is None or book is None:
