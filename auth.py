@@ -18,7 +18,7 @@ settings = get_settings()
 
 JWT_SECRET = settings.JWT_SECRET
 JWT_ALGORITHM = settings.JWT_ALGORITHM
-JWT_DEFAULT_EXPIRATION_HOURS = settings.JWT_DEFAULT_EXPIRATION_HOURS
+JWT_DEFAULT_EXPIRATION_HOURS = settings.JWT_EXPIRATION_HOURS
 
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer()),
